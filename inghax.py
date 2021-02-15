@@ -1,7 +1,3 @@
-import os
-import base64
-import re
-
 import time
 from selenium.webdriver import Firefox
 from selenium.webdriver.firefox.options import Options
@@ -9,32 +5,42 @@ import cv2
 import numpy as np
 import easyocr
 import base64
-import io
-from PIL import Image, ImageEnhance, ImageFilter
-
 from pprint import pprint
+
+# SETTINGS
+headless = False
+clientNumber = "1337"
+PIN = "1111"
 opts = Options()
-browser = Firefox()
+
+if headless == True:
+    opts.add_argument("--headless")
+    browser = Firefox(options=opts)
+else:
+    opts = Options()
+    browser = Firefox()
+
 browser.get("https://ing.com.au/securebanking/")
 
 def banner():
-    print("""IIIIIIIIIINNNNNNNN        NNNNNNNNHHHHHHHHH     HHHHHHHHH               AAA                  CCCCCCCCCCCCCKKKKKKKKK    KKKKKKK
-I::::::::IN:::::::N       N::::::NH:::::::H     H:::::::H              A:::A              CCC::::::::::::CK:::::::K    K:::::K
-I::::::::IN::::::::N      N::::::NH:::::::H     H:::::::H             A:::::A           CC:::::::::::::::CK:::::::K    K:::::K
-II::::::IIN:::::::::N     N::::::NHH::::::H     H::::::HH            A:::::::A         C:::::CCCCCCCC::::CK:::::::K   K::::::K
-  I::::I  N::::::::::N    N::::::N  H:::::H     H:::::H             A:::::::::A       C:::::C       CCCCCCKK::::::K  K:::::KKK
-  I::::I  N:::::::::::N   N::::::N  H:::::H     H:::::H            A:::::A:::::A     C:::::C                K:::::K K:::::K   
-  I::::I  N:::::::N::::N  N::::::N  H::::::HHHHH::::::H           A:::::A A:::::A    C:::::C                K::::::K:::::K    
-  I::::I  N::::::N N::::N N::::::N  H:::::::::::::::::H          A:::::A   A:::::A   C:::::C                K:::::::::::K     
-  I::::I  N::::::N  N::::N:::::::N  H:::::::::::::::::H         A:::::A     A:::::A  C:::::C                K:::::::::::K     
-  I::::I  N::::::N   N:::::::::::N  H::::::HHHHH::::::H        A:::::AAAAAAAAA:::::A C:::::C                K::::::K:::::K    
-  I::::I  N::::::N    N::::::::::N  H:::::H     H:::::H       A:::::::::::::::::::::AC:::::C                K:::::K K:::::K   
-  I::::I  N::::::N     N:::::::::N  H:::::H     H:::::H      A:::::AAAAAAAAAAAAA:::::AC:::::C       CCCCCCKK::::::K  K:::::KKK
-II::::::IIN::::::N      N::::::::NHH::::::H     H::::::HH   A:::::A             A:::::AC:::::CCCCCCCC::::CK:::::::K   K::::::K
-I::::::::IN::::::N       N:::::::NH:::::::H     H:::::::H  A:::::A               A:::::ACC:::::::::::::::CK:::::::K    K:::::K
-I::::::::IN::::::N        N::::::NH:::::::H     H:::::::H A:::::A                 A:::::A CCC::::::::::::CK:::::::K    K:::::K
-IIIIIIIIIINNNNNNNN         NNNNNNNHHHHHHHHH     HHHHHHHHHAAAAAAA                   AAAAAAA   CCCCCCCCCCCCCKKKKKKKKK    KKKKKKK
-                                                                                                                             """)
+    print("""                                                                                                                                 
+IIIIIIIIIINNNNNNNN        NNNNNNNN        GGGGGGGGGGGGGHHHHHHHHH     HHHHHHHHH               AAA               XXXXXXX       XXXXXXX
+I::::::::IN:::::::N       N::::::N     GGG::::::::::::GH:::::::H     H:::::::H              A:::A              X:::::X       X:::::X
+I::::::::IN::::::::N      N::::::N   GG:::::::::::::::GH:::::::H     H:::::::H             A:::::A             X:::::X       X:::::X
+II::::::IIN:::::::::N     N::::::N  G:::::GGGGGGGG::::GHH::::::H     H::::::HH            A:::::::A            X::::::X     X::::::X
+  I::::I  N::::::::::N    N::::::N G:::::G       GGGGGG  H:::::H     H:::::H             A:::::::::A           XXX:::::X   X:::::XXX
+  I::::I  N:::::::::::N   N::::::NG:::::G                H:::::H     H:::::H            A:::::A:::::A             X:::::X X:::::X   
+  I::::I  N:::::::N::::N  N::::::NG:::::G                H::::::HHHHH::::::H           A:::::A A:::::A             X:::::X:::::X    
+  I::::I  N::::::N N::::N N::::::NG:::::G    GGGGGGGGGG  H:::::::::::::::::H          A:::::A   A:::::A             X:::::::::X     
+  I::::I  N::::::N  N::::N:::::::NG:::::G    G::::::::G  H:::::::::::::::::H         A:::::A     A:::::A            X:::::::::X     
+  I::::I  N::::::N   N:::::::::::NG:::::G    GGGGG::::G  H::::::HHHHH::::::H        A:::::AAAAAAAAA:::::A          X:::::X:::::X    
+  I::::I  N::::::N    N::::::::::NG:::::G        G::::G  H:::::H     H:::::H       A:::::::::::::::::::::A        X:::::X X:::::X   
+  I::::I  N::::::N     N:::::::::N G:::::G       G::::G  H:::::H     H:::::H      A:::::AAAAAAAAAAAAA:::::A    XXX:::::X   X:::::XXX
+II::::::IIN::::::N      N::::::::N  G:::::GGGGGGGG::::GHH::::::H     H::::::HH   A:::::A             A:::::A   X::::::X     X::::::X
+I::::::::IN::::::N       N:::::::N   GG:::::::::::::::GH:::::::H     H:::::::H  A:::::A               A:::::A  X:::::X       X:::::X
+I::::::::IN::::::N        N::::::N     GGG::::::GGG:::GH:::::::H     H:::::::H A:::::A                 A:::::A X:::::X       X:::::X
+IIIIIIIIIINNNNNNNN         NNNNNNN        GGGGGG   GGGGHHHHHHHHH     HHHHHHHHHAAAAAAA                   AAAAAAAXXXXXXX       XXXXXXX
+""")
 
 # Nathan is a cuck.
 
@@ -75,10 +81,10 @@ def save(encoded_data, file):
             lukeisafucboi[value2] = encoded_data
 
 
-time.sleep(10)
+time.sleep(3)
 table = browser.find_element_by_xpath("""//*[@id="cifField"]""")
 browser.find_element_by_id("cifField").clear()
-browser.find_element_by_id("cifField").send_keys("56551563")
+browser.find_element_by_id("cifField").send_keys(clientNumber)
 
 digitpanel = browser.find_element_by_xpath("""//*[@id="keypad"]""")
 keypad = digitpanel.find_element_by_class_name("module-keypad")
@@ -115,14 +121,13 @@ for i in range(0, 5):
 #print(lukehasmallpp)
 #print('\n \n')
 
-PIN = ["2", "2", "0", "2"]
 listy = []
 '''for senpaiLukas in PIN:
     rr = lukeisafucboi[senpaiLukas]
     listy[rr] = lukehasmallpp[rr]
 pprint(listy)'''
 
-for senpaiLukas in PIN:
+for senpaiLukas in list(PIN):
     imgString = lukeisafucboi[senpaiLukas]
     listy.append([imgString, lukehasmallpp[imgString]])
 #pprint(listy)
@@ -140,5 +145,5 @@ pprint(listy)
 pprint(lukeisafucboi)
 
 
-time.sleep(2)
+time.sleep(1)
 login_button.click()
