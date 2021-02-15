@@ -1,2 +1,4 @@
 venv/
 early\ files/
+# Zero_image.png is generated at every runtime so unnecessary in repo
+Zero_image.png
