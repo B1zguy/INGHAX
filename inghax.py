@@ -1,4 +1,3 @@
-import time
 import cv2
 import numpy as np
 import easyocr
@@ -86,9 +85,19 @@ else:  # Yeah I can probs fix how I'm asking for input since one name is redunda
         opts.add_argument("--headless")
     #opts.add_argument("--headless")
     browser = Chrome(options=opts)
-
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
 
 browser.get("https://ing.com.au/securebanking/")
+# Awaiting load of URL
+try:
+    waiting = WebDriverWait(browser, 10)
+    waiting.until(EC.presence_of_element_located((By.XPATH, """//*[@id="login-btn"]""")))
+    print("We're in.")
+except TimeoutException:
+    print('Page no loading :( ')
 
 def banner():
     print("""                                                                                                                                 
@@ -154,8 +163,8 @@ def save(encoded_data, file):
             # Input the determined 0 keypad into existing dictionary
             lukeisafucboi[value2] = encoded_data
 
-# Ensures page has loaded
-time.sleep(3)
+
+
 # Finds and inputs Client Number into field (just plain text input here)
 table = browser.find_element_by_xpath("""//*[@id="cifField"]""")
 browser.find_element_by_id("cifField").clear()
@@ -165,7 +174,7 @@ browser.find_element_by_id("cifField").send_keys(str(clientNumber))
 digitpanel = browser.find_element_by_xpath("""//*[@id="keypad"]""")
 keypad = digitpanel.find_element_by_class_name("module-keypad")
 # Find and store location of login btn for later
-login_button = browser.find_element_by_xpath("""//*[@id="login-btn"]""")
+login_button = browser.find_element_by_xpath("""//*[@id="login-btn"]""") # also used for 'waiting'
 ing_values = {}
 keypad_digits = {}
 
@@ -228,13 +237,10 @@ for i in listy:
     print(i)
     print(i.get_attribute("value"))'''
 
-print('listy')
-pprint(listy)
-print('fucboi')
-pprint(lukeisafucboi)
-print('pp')
-pprint(lukehasmallpp)
-
-
-time.sleep(1)
+try:
+    waiting = WebDriverWait(browser, 10)
+    waiting.until(EC.presence_of_element_located((By.XPATH, """//*[@id="login-btn"]""")))
+    print("Into the mainframe...")
+except TimeoutException:
+    print('Cannot login :( ')
 login_button.click()
