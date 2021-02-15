@@ -118,6 +118,8 @@ I::::::::IN::::::N       N:::::::N   GG:::::::::::::::GH:::::::H     H:::::::H  
 I::::::::IN::::::N        N::::::N     GGG::::::GGG:::GH:::::::H     H:::::::H A:::::A                 A:::::A X:::::X       X:::::X
 IIIIIIIIIINNNNNNNN         NNNNNNN        GGGGGG   GGGGHHHHHHHHH     HHHHHHHHHAAAAAAA                   AAAAAAAXXXXXXX       XXXXXXX
 """)
+banner()
+
 
 # Compares 0 on keypad to template.png
 # EasyOCR cannot automatically detect a 0
@@ -166,7 +168,8 @@ def save(encoded_data, file):
 
 
 # Finds and inputs Client Number into field (just plain text input here)
-table = browser.find_element_by_xpath("""//*[@id="cifField"]""")
+#table = browser.find_element_by_xpath("""//*[@id="cifField"]""")
+#print(table)
 browser.find_element_by_id("cifField").clear()
 browser.find_element_by_id("cifField").send_keys(str(clientNumber))
 
@@ -188,7 +191,6 @@ lukehasmallpp = {}
 reader = easyocr.Reader(['en'])
 
 
-banner()
 # 1, 4  div elements = 0 isnt in the elements. - I am god.
 for i in range(0, 5):
     for j in range(0, 5):
