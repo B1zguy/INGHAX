@@ -188,11 +188,6 @@ lukehasmallpp = {}
 reader = easyocr.Reader(['en'])
 
 
-'''c = browser.find_element_by_css_selector('.module-keypad')
-innerHTML = c.get_attribute('innerHTML')
-src = c.get_attribute("src")
-print(src)'''
-
 banner()
 # 1, 4  div elements = 0 isnt in the elements. - I am god.
 for i in range(0, 5):
@@ -208,18 +203,9 @@ for i in range(0, 5):
             lukehasmallpp[test_vales] = (j, i)
             save(test_vales, "testfile{0}.png".format(i))
 
-#print(lukeisafucboi)
-#print('\n')
-#print(lukehasmallpp)
-#print('\n \n')
-
 # Dictionary pairing base64 w/ its location
 # Made by comparing lukeisafucboi & lukehasmallpp to determined keypaid location for desired PIN
 listy = []
-'''for senpaiLukas in PIN:
-    rr = lukeisafucboi[senpaiLukas]
-    listy[rr] = lukehasmallpp[rr]
-pprint(listy)'''
 
 # Iterate through dictionary of determined digits and dictionary of known location
 # to find locations of PIN's numbers
@@ -232,10 +218,6 @@ for i in listy:
     nums = i[1]
     position = keypad.find_elements_by_xpath("""//*[@id="keypad"]/div/div[{}]/div[{}]/div/img""".format(nums[0], nums[1]))[0]
     position.click()
-
-'''for i in keypad.find_elements_by_xpath("""//*[@id="keypad"]/div/div[{}]/div[{}]/div/img""".format(3, 3)):
-    print(i)
-    print(i.get_attribute("value"))'''
 
 try:
     waiting = WebDriverWait(browser, 10)
