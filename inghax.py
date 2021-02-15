@@ -1,25 +1,98 @@
 import time
-from selenium.webdriver import Firefox
-from selenium.webdriver.firefox.options import Options
 import cv2
 import numpy as np
 import easyocr
 import base64
 from pprint import pprint
+import argparse
+import ast # Only used for boolean eval. Try and replace later.
+
+# Parameters syntax |  --home=Browser, --headless=True/False, --client=1337, --PIN=1111
+
+# Checks if input is string because argparse can't directly do this
+def stringOnly(x):
+    try:
+        int(x)
+    except ValueError:
+        return x
+    raise argparse.ArgumentTypeError('No numbers allowed!')
+
+# Ensuring length is =4. Assuming non-int will be caught too.
+def PINcheck(x):
+    if len(x) > 4 or len(x) < 4:
+        raise argparse.ArgumentTypeError('Four exact numbers only, sweetie.')
+    return x
+
+def browserCheck(x):
+    browerList = ['Firefox', 'Chrome']
+    # if x != 'Firefox' or 'Chrome':
+    if x not in browerList:
+        raise argparse.ArgumentTypeError('Only type Firefox/Chrome m8, first-caps no typos.')
+        # return x
+    else:
+        stringOnly(x)
+        return x
+
+'''def boolCheck(x):
+    print(x)
+    try:
+        bool(x)
+    except ValueError:
+        return x
+    raise argparse.ArgumentTypeError('Keep it True or False!')'''
+
+def boolCheck(x):
+    try:
+        return ast.literal_eval(x)
+    except ValueError:
+        return x
+    raise argparse.ArgumentTypeError('Keep it True or False!')
+
+def intCheck(x):
+    print(x)
+    print(type(x))
+    try:
+        int(x)
+    except ValueError:
+        return x
+    raise argparse.ArgumentTypeError('Client Number aka login/username! Must be a number.')
+
+# Initialise input parsing
+input = argparse.ArgumentParser(add_help=False)
+
+# Required inputs
+## Most currently using help parameter causing using custom functions to check inputs
+input.add_argument('--browser', type=browserCheck, required=True)
+input.add_argument('--headless', type=boolCheck, required=True)
+input.add_argument('--client', type=int, required=True, help='Client Number aka login/username! Must be a number.')
+input.add_argument('--PIN', type=PINcheck, required=True)
+
+# All values get chucked in here
+inputs = input.parse_args()
+
 
 # SETTINGS
-headless = False
-clientNumber = "1337"
-PIN = "1111"
-opts = Options()
+headless = inputs.headless
+clientNumber = inputs.client
+PIN = inputs.PIN
+# Yes, I need to sort out the switching between int and str
+
+# Importing the correct stuff based on browser
+if inputs.browser == 'Firefox':   # M A S T E R R A C E
+    from selenium.webdriver import Firefox
+    from selenium.webdriver.firefox.options import Options
+    opts = Options()
+    #opts.add_argument("--headless")
+    browser = Firefox(options=opts)
+else:  # Yeah I can probs fix how I'm asking for input since one name is reduntant. Already checking input earlier up
+    from selenium.webdriver import Chrome
+    from selenium.webdriver.chrome.options import Options
+    opts = Options()
+    #opts.add_argument("--headless")
+    browser = Chrome(options=opts)
 
 if headless == True:
     opts.add_argument("--headless")
-    browser = Firefox(options=opts)
-else:
-    opts = Options()
-    browser = Firefox()
-
 browser.get("https://ing.com.au/securebanking/")
 
 def banner():
@@ -84,7 +157,7 @@ def save(encoded_data, file):
 time.sleep(3)
 table = browser.find_element_by_xpath("""//*[@id="cifField"]""")
 browser.find_element_by_id("cifField").clear()
-browser.find_element_by_id("cifField").send_keys(clientNumber)
+browser.find_element_by_id("cifField").send_keys(str(clientNumber))
 
 digitpanel = browser.find_element_by_xpath("""//*[@id="keypad"]""")
 keypad = digitpanel.find_element_by_class_name("module-keypad")
